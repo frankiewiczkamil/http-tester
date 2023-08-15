@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Http tester</title>
+  </head>
+  <body>
+    <label for="protocol">Select Protocol:</label>
+    <select id="protocol">
+      <option value="http1">HTTP/1</option>
+      <option value="http2">HTTP/2</option>
+    </select>
+
+    <button id="requestResources">request resources</button>
+    <script>
+      const requestResources = document.getElementById('requestResources');
+      const protocolSelector = document.getElementById('protocol');
+
+      requestResources.addEventListener('click', async () => {
+        const selectedProtocol = protocolSelector.value;
+        const port = selectedProtocol === 'http1' ? 18443 : 28443;
+        for (let i = 0; i < 10; i++) fetch(`https://localhost:${port}/simulate?port=${port}`);
+      });
+    </script>
+  </body>
+</html>
