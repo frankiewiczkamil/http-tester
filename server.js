@@ -6,18 +6,22 @@ const https = require('https');
 const spdy = require('spdy');
 const path = require('path');
 
-const wait = async () => {
-  await new Promise((resolve) => setTimeout(resolve, 3000));
-};
-
 app.use(cors());
 app.use(express.static('public'));
 
 app.get('/simulate', async (req, res) => {
   const { port } = req.query;
   console.log(`Simulating on port ${port}`);
-  await wait();
-  res.send(`Simulation complete on port ${port}`);
+  const filePath = 'public/index.html';
+
+  const fileStream = fs.createReadStream(filePath);
+
+  fileStream.on('open', () => {
+    res.setHeader('Content-Type', 'text/plain');
+    res.setHeader('Content-Disposition', 'attachment; filename=file.txt');
+
+    fileStream.pipe(res);
+  });
 });
 
 const certsPath = path.join(__dirname, 'certs');
