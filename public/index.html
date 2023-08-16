@@ -9,8 +9,19 @@
       <option value="http1">HTTP/1</option>
       <option value="http2">HTTP/2</option>
     </select>
-
+    <br />
+    <label for="number-of-requests">Number of requests:</label>
+    <input id="number-of-requests" type="number" value="5" />
+    <br />
     <button id="requestResources">request resources</button>
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    Observe results in devtools
+    <br />
     <script>
       const requestResources = document.getElementById('requestResources');
       const protocolSelector = document.getElementById('protocol');
@@ -18,7 +29,15 @@
       requestResources.addEventListener('click', async () => {
         const selectedProtocol = protocolSelector.value;
         const port = selectedProtocol === 'http1' ? 18443 : 28443;
-        for (let i = 0; i < 10; i++) fetch(`https://localhost:${port}/simulate?port=${port}`);
+        const numberOfRequests = Number.parseInt(document.getElementById('number-of-requests').value);
+        const tasks = [];
+        const startedAt = performance.now();
+        for (let i = 0; i < numberOfRequests; i++) {
+          tasks.push(fetch(`https://localhost:${port}/simulate?port=${port}`));
+        }
+        await Promise.all(tasks);
+        const finishedAt = performance.now();
+        console.log('it took', finishedAt - startedAt);
       });
     </script>
   </body>
