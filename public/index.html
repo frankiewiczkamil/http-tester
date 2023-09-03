@@ -33,7 +33,7 @@
         const tasks = [];
         const startedAt = performance.now();
         for (let i = 0; i < numberOfRequests; i++) {
-          tasks.push(fetch(`https://localhost:${port}/simulate?port=${port}`));
+          tasks.push(fetch(`https://localhost:${port}/simulate`));
         }
         await Promise.all(tasks);
         const finishedAt = performance.now();

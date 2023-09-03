@@ -6,17 +6,13 @@
   "scripts": {
     "start": "./generate-cert.sh && node server.js",
     "dev": "./generate-cert.sh && nodemon -q server.js"
-
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-    "devDependencies": {
+  "devDependencies": {
     "prettier": "2.8.3",
-    "nodemon": "^2.0.20"},
-  "dependencies": {
-    "cors": "^2.8.5",
-    "express": "^4.18.2",
-    "spdy": "^4.0.2"
-  }
+    "nodemon": "^2.0.20"
+  },
+  "dependencies": {}
 }

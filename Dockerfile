@@ -13,7 +13,6 @@ COPY public ./public
 COPY server.js ./
 
 
-EXPOSE 80
 EXPOSE 18443
 EXPOSE 28443
 

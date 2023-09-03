@@ -1,28 +1,36 @@
-const express = require('express');
-const cors = require('cors');
-const app = express();
 const fs = require('fs');
 const https = require('https');
-const spdy = require('spdy');
 const path = require('path');
+const http2 = require('http2');
+const { pipeline } = require('stream');
 
-app.use(cors());
-app.use(express.static('public'));
-
-app.get('/simulate', async (req, res) => {
-  const { port } = req.query;
-  console.log(`Simulating on port ${port}`);
-  const filePath = 'public/index.html';
-
-  const fileStream = fs.createReadStream(filePath);
-
-  fileStream.on('open', () => {
-    res.setHeader('Content-Type', 'text/plain');
-    res.setHeader('Content-Disposition', 'attachment; filename=file.txt');
-
-    fileStream.pipe(res);
-  });
-});
+const corsHeaders = {
+  'access-control-allow-origin': '*',
+  'access-control-allow-headers': 'Origin, X-Requested-With, Content-Type, Accept',
+  'access-control-allow-methods': 'GET, POST, PUT, DELETE, OPTIONS',
+};
+const indexHtmlPath = path.join(__dirname, 'public', 'index.html');
+const app = (req, res) => {
+  if (req.url === '/index.html') {
+    fs.readFile(indexHtmlPath, 'utf8', (err, data) => {
+      if (err) {
+        res.writeHead(500, { 'Content-Type': 'text/plain' });
+        res.end('Internal Server Error');
+      } else {
+        res.writeHead(200, { 'Content-Type': 'text/html' });
+        res.end(data);
+      }
+    });
+  } else if (req.url === '/simulate') {
+    res.writeHead(200, corsHeaders);
+    pipeline(fs.createReadStream(indexHtmlPath), res, (err) => {
+      err ? console.error(err) : console.log('done');
+    });
+  } else {
+    res.writeHead(200, { 'content-type': 'text/plain', ...corsHeaders });
+    res.end('default');
+  }
+};
 
 const certsPath = path.join(__dirname, 'certs');
 const options = {
@@ -30,10 +38,10 @@ const options = {
   cert: fs.readFileSync(path.join(certsPath, 'cert.pem'), 'utf8'),
 };
 
-const httpsServer = https.createServer(options, app);
-const http2Server = spdy.createServer(options, app);
+const http1Server = https.createServer(options, app);
+const http2Server = http2.createSecureServer(options, app);
 
-httpsServer.listen(18443, () => {
+http1Server.listen(18443, () => {
   console.log('HTTPS server listening on port 18443');
 });
 
