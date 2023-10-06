@@ -130,4 +130,8 @@ dist
 .pnp.*
 
 # ssl certificates
-certs/
+cert.pem
+key.pem
+
+# jetbrains ide
+.idea

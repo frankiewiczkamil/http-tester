@@ -10,6 +10,7 @@ RUN npm install
 COPY generate-cert.sh ./
 RUN chmod +x generate-cert.sh
 COPY public ./public
+COPY certs ./certs
 COPY server.js ./
 
 
