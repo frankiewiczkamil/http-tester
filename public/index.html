@@ -4,41 +4,40 @@
     <title>Http tester</title>
   </head>
   <body>
-    <label for="protocol">Select Protocol:</label>
-    <select id="protocol">
-      <option value="http1">HTTP/1</option>
-      <option value="http2">HTTP/2</option>
-    </select>
+    <label for="number-of-requests">Number of parallel requests:</label>
+    <input id="number-of-requests" type="number" value="5" max="5" min="1" />
     <br />
-    <label for="number-of-requests">Number of requests:</label>
-    <input id="number-of-requests" type="number" value="5" />
+    <label for="number-of-iterations">Number of iterations:</label>
+    <input id="number-of-iterations" type="number" value="10" max="1000" min="1" />
     <br />
-    <button id="requestResources">request resources</button>
-    <br />
-    <br />
-    <br />
-    <br />
-    <br />
-    <br />
+    request
+    <button class="request" value="18443">http 1.1</button>
+    <button class="request" value="28443">http 2</button>
+    <br /><br />
     Observe results in devtools
-    <br />
     <script>
-      const requestResources = document.getElementById('requestResources');
-      const protocolSelector = document.getElementById('protocol');
-
-      requestResources.addEventListener('click', async () => {
-        const selectedProtocol = protocolSelector.value;
-        const port = selectedProtocol === 'http1' ? 18443 : 28443;
-        const numberOfRequests = Number.parseInt(document.getElementById('number-of-requests').value);
-        const tasks = [];
-        const startedAt = performance.now();
-        for (let i = 0; i < numberOfRequests; i++) {
-          tasks.push(fetch(`https://localhost:${port}/simulate`));
-        }
-        await Promise.all(tasks);
-        const finishedAt = performance.now();
-        console.log('it took', finishedAt - startedAt);
-      });
+      const requestButtons = document.getElementsByClassName('request');
+      for (let button of requestButtons) {
+        button.addEventListener('click', async (e) => {
+          let sum = 0;
+          const numberOfIterations = Number.parseInt(document.getElementById('number-of-iterations').value);
+          const numberOfRequests = Number.parseInt(document.getElementById('number-of-requests').value);
+          for (let i = 0; i < numberOfIterations; i++) {
+            console.log(`${i} iteration start`);
+            const port = e.target.value;
+            const tasks = [];
+            const startedAt = performance.now();
+            for (let r = 0; r < numberOfRequests; r++) {
+              tasks.push(fetch(`https://localhost:${port}/simulate/${r + 1}`));
+            }
+            await Promise.all(tasks);
+            const finishedAt = performance.now();
+            sum += finishedAt - startedAt;
+            console.log(`${i} iteration took`, finishedAt - startedAt);
+          }
+          console.log(`total ${sum}ms, which is ${sum / numberOfIterations} on average`);
+        });
+      }
     </script>
   </body>
 </html>

@@ -21,6 +21,12 @@ const app = (req, res) => {
         res.end(data);
       }
     });
+  } else if (req.url.substring(0, req.url.length - 1) === '/simulate/') {
+    res.writeHead(200, { 'content-type': 'text/plain', ...corsHeaders });
+    const filePath = path.join(__dirname, 'public', req.url.substring(req.url.length - 1, req.url.length));
+    pipeline(fs.createReadStream(filePath), res, (err) => {
+      err ? console.error(err) : console.log('fetched', filePath);
+    });
   } else if (req.url === '/simulate') {
     res.writeHead(200, corsHeaders);
     pipeline(fs.createReadStream(indexHtmlPath), res, (err) => {
