@@ -135,3 +135,5 @@ key.pem
 
 # jetbrains ide
 .idea
+
+.direnv
