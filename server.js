@@ -1,15 +1,20 @@
-const fs = require('fs');
-const https = require('https');
-const path = require('path');
-const http2 = require('http2');
-const { pipeline } = require('stream');
+import https from 'https';
+import http2 from 'http2';
+import fs from 'fs';
+import { dirname, join } from 'path';
+import { pipeline } from 'stream';
+import { fileURLToPath } from 'url';
 
 const corsHeaders = {
   'access-control-allow-origin': '*',
   'access-control-allow-headers': 'Origin, X-Requested-With, Content-Type, Accept',
   'access-control-allow-methods': 'GET, POST, PUT, DELETE, OPTIONS',
 };
-const indexHtmlPath = path.join(__dirname, 'public', 'index.html');
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+const indexHtmlPath = join(__dirname, 'public', 'index.html');
+
 const app = (req, res) => {
   if (req.url === '/index.html') {
     fs.readFile(indexHtmlPath, 'utf8', (err, data) => {
@@ -23,7 +28,7 @@ const app = (req, res) => {
     });
   } else if (req.url.substring(0, req.url.length - 1) === '/simulate/') {
     res.writeHead(200, { 'content-type': 'text/plain', ...corsHeaders });
-    const filePath = path.join(__dirname, 'public', req.url.substring(req.url.length - 1, req.url.length));
+    const filePath = join(__dirname, 'public', req.url.substring(req.url.length - 1, req.url.length));
     pipeline(fs.createReadStream(filePath), res, (err) => {
       err ? console.error(err) : console.log('fetched', filePath);
     });
@@ -38,10 +43,10 @@ const app = (req, res) => {
   }
 };
 
-const certsPath = path.join(__dirname, 'certs');
+const certsPath = join(__dirname, 'certs');
 const options = {
-  key: fs.readFileSync(path.join(certsPath, 'key.pem'), 'utf8'),
-  cert: fs.readFileSync(path.join(certsPath, 'cert.pem'), 'utf8'),
+  key: fs.readFileSync(join(certsPath, 'key.pem'), 'utf8'),
+  cert: fs.readFileSync(join(certsPath, 'cert.pem'), 'utf8'),
 };
 
 const http1Server = https.createServer(options, app);

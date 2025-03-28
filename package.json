@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "main": "server.js",
+  "type": "module",
   "scripts": {
     "start": "./generate-cert.sh && node server.js",
     "dev": "./generate-cert.sh && nodemon -q server.js"
@@ -12,7 +13,7 @@
   "license": "ISC",
   "devDependencies": {
     "prettier": "2.8.3",
-    "nodemon": "^2.0.20"
+    "nodemon": "^3.1.9"
   },
   "dependencies": {}
 }
