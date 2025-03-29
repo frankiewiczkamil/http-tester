@@ -1,4 +1,4 @@
-FROM node:14
+FROM node:22
 
 WORKDIR /app
 
@@ -11,7 +11,7 @@ COPY generate-cert.sh ./
 RUN chmod +x generate-cert.sh
 COPY public ./public
 COPY certs ./certs
-COPY server.js ./
+COPY *.js ./
 
 
 EXPOSE 18443
