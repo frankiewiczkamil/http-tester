@@ -1,7 +1,7 @@
 import { randomBytes } from 'crypto';
 import { Readable } from 'stream';
 
-export function createRandomStream(length, chunkSize = 16) {
+export function createRandomStream(length) {
   let bytesSent = 0;
 
   return new Readable({
